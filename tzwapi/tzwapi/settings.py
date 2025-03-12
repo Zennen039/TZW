@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tzwapp.apps.TzwappConfig',
     'ckeditor',
-    'ckeditor_uploader'
+    'ckeditor_uploader',
+    'rest_framework',
+    'drf_yasg'
 ]
 
 CKEDITOR_UPLOAD_PATH = "ckeditors/lessons/"
@@ -86,6 +88,15 @@ DATABASES = {
         'HOST': ''  # mặc định localhost
     }
 }
+
+import cloudinary.uploader
+
+cloudinary.config(
+    cloud_name = "dvn6qzq9o",
+    api_key = "438998175576659",
+    api_secret = "2PhCeDJfEWebcAPrYZSHM3fHweI", # Click 'View API Keys' above to copy your API secret
+    secure=True
+)
 
 import pymysql
 
