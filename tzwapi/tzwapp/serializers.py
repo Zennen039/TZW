@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from tzwapp.models import Category, Course, Lesson, Tag, User
+from tzwapp.models import Category, Course, Lesson, Tag, User, Comment
 
 
 class CategorySerializer(ModelSerializer):
@@ -49,3 +49,33 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'username', 'password', 'email', 'avatar']
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            }
+        }
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        if instance.avatar:
+            data['avatar'] = instance.avatar.url
+
+        return data
+
+    def create(self, validated_data):
+        data = validated_data.copy()
+
+        u = User(**data)
+        u.set_password(u.password)
+        u.save()
+
+        return u
+
+
+class CommentSerializer(ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'content', 'created_date', 'updated_date']
