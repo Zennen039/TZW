@@ -41,10 +41,19 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'rest_framework',
-    'drf_yasg'
+    'drf_yasg',
+    'oauth2_provider'
 ]
 
 CKEDITOR_UPLOAD_PATH = "ckeditors/lessons/"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    )
+}
+
+OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,9 +101,9 @@ DATABASES = {
 import cloudinary.uploader
 
 cloudinary.config(
-    cloud_name = "dvn6qzq9o",
-    api_key = "438998175576659",
-    api_secret = "2PhCeDJfEWebcAPrYZSHM3fHweI", # Click 'View API Keys' above to copy your API secret
+    cloud_name="dvn6qzq9o",
+    api_key="438998175576659",
+    api_secret="2PhCeDJfEWebcAPrYZSHM3fHweI",  # Click 'View API Keys' above to copy your API secret
     secure=True
 )
 
@@ -142,3 +151,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CLIENT_ID = 'okzPilJIc1qsGEmaTIzMJ3WAsfEyb6msPg9x5zzR'
+
+CLIENT_SECRET = 'k523QxO90oeegx6CsGYrnbWhu4C519U4R1HvhjH6LYe8egpzdPbdY6SoXyqzAUEQ4Ngw9ANhTPrSpMznSlhbDSc5mZWuv1LTBYZlGpMss2QQIviAZiEqu9Ci1TaW0iY1'

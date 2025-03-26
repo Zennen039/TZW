@@ -74,8 +74,18 @@ class UserSerializer(ModelSerializer):
 
 
 class CommentSerializer(ModelSerializer):
-    user = UserSerializer()
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        data['user'] = UserSerializer(instance.user).data
+
+        return data
 
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'content', 'created_date', 'updated_date']
+        fields = ['id', 'user', 'content', 'created_date', 'updated_date', 'lesson']
+        extra_kwargs = {
+            'lesson': {
+                'write_only': True
+            }
+        }
