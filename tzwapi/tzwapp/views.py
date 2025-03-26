@@ -1,7 +1,7 @@
 from rest_framework import viewsets, generics, status, parsers, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from tzwapp.models import Category, Course, Lesson, User, Comment
+from tzwapp.models import Category, Course, Lesson, User, Comment, Like
 from tzwapp import serializers, paginators, perms
 
 
@@ -49,7 +49,7 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     serializer_class = serializers.LessonDetailSerializer
 
     def get_permissions(self):
-        if self.action in ['get_comments'] and self.request.method.__eq__('POST'):
+        if self.action in ['get_comments', 'like'] and self.request.method.__eq__('POST'):
             return [permissions.IsAuthenticated()]
 
         return [permissions.AllowAny()]
@@ -71,7 +71,27 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 
         comments = self.get_object().comment_set.select_related('user').filter(active=True)
 
+        paginator = paginators.CommentPaginator()
+
+        page = paginator.paginate_queryset(comments, request)
+
+        if page:
+            serializer = serializers.CommentSerializer(page, many=True)
+
+            return paginator.get_paginated_response(serializer.data)
+
         return Response(serializers.CommentSerializer(comments, many=True).data, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], url_path='like', detail=True)
+    def like(self, request, pk):
+        li, created = Like.objects.get_or_create(user=request.user, lesson=self.get_object())
+
+        if not created:
+            li.active = not li.active
+
+        li.save()
+
+        return Response(serializers.LessonDetailSerializer(self.get_object(), context={'request': request}).data)
 
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
